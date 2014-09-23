@@ -1,12 +1,12 @@
 {
     "hosts": "localhost",
     "project": {
-        "root": "~/work",
+        "root": "/tmp",
         "tmpl": "https://github.com/petrikoz/project-template.git",
         "src": "https://github.com/petrikoz/project-template.git"
     },
     "teamocil": {
-        "root": "~/.teamocil",
+        "root": "/tmp",
         "filename": ".teamocil.yml"
     }
 }
