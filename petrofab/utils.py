@@ -2,7 +2,6 @@
 # native
 import json
 import os
-import sys
 
 # fabric.api
 from fabric.colors import red
@@ -24,15 +23,22 @@ def path_abs(path, check=True):
 
     Returns:
         String is containing absolute path of arg 'path'.
+
+    Examples:
+        Result must be absolute
+        >>> path_abs('/./tmp')
+        '/tmp'
+
+        Result must exists
+        >>> path_abs('/TmP')
+        Traceback (most recent call last):
+            ...
+        SystemExit: 1
     """
     path = os.path.expanduser(path)
-    path = os.path.normcase(path)
-    path = os.path.normpath(path)
     path = os.path.abspath(path)
     if check and not os.path.exists(path):
-        msg = u'Path "%s" not exists!' % path.decode(sys.stdin.encoding)
-        msg = msg.encode(sys.stdout.encoding)
-        abort(red(msg))
+        abort(red('Path "{0}" not exists!').format(path))
     return path
 
 
