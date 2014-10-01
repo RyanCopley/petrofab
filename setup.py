@@ -16,7 +16,6 @@ setup(
     license='BSD',
     description='Tasks based on Fabric for work with my project',
     packages=find_packages(),
-    package_data={'petrofab': ['defaults.json']},
     # long_description=read('README'),
     setup_requires=[
         'fabric',
