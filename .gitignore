@@ -7,6 +7,8 @@ __pycache__/
 # Distribution / packaging
 develop-eggs/
 eggs/
+build/
+dist/
 *.egg-info/
 *.egg
 
@@ -15,6 +17,7 @@ pip-log.txt
 pip-delete-this-directory.txt
 
 # Unit test / coverage reports
+htmlcov/
 .tox/
 .coverage
 .cache
@@ -23,6 +26,3 @@ coverage.xml
 
 # Sphinx documentation
 docs/_build/
-
-###Other###
-.editorconfig

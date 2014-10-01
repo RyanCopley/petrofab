@@ -1,29 +1,33 @@
 # -*- coding: utf-8 -*-
 # fabric.api
-from fabric.api import env
+from fabric.api import settings
+from fabric.colors import green, red
 from fabric.context_managers import cd
-from fabric.decorators import task
 from fabric.operations import run
+from fabric.utils import abort
 
 # in-module
-from .utils import get_config, path_abs
+from .utils import path_abs
 
 __all__ = [
-    'subl_init_project',
+    'Sublime',
 ]
 
-# Update 'env' from default config
-env.update(get_config())
 
+class Sublime(object):
 
-@task
-def subl_init_project(name, path=env.project['root']):
-    """ Set name of Sublime Text project root file to current project name.
+    """docstring for Sublime"""
 
-    Args:
-        name (str): Name of new project.
-        path (str): Path to new project, defaults to '~/work'.
-    """
-    path = path_abs(path)
-    with cd(path):
-        run('mv example.sublime-project {0}.sublime-project'.format(name))
+    def __init__(self, name, path):
+        super(Sublime, self).__init__()
+        self.name = name
+        self.path = path_abs(path)
+
+    def make_project(self):
+        """ Set name of Sublime project."""
+        with cd(self.path), settings(warn_only=True):
+            result = run(('mv example.sublime-project'
+                          ' {.name}.sublime-project').format(self))
+            if result.failed:
+                abort(red(result))
+        print(green(u'Sublime project "{.name}" inited.').format(self))
