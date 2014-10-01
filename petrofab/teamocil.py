@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 # native
-import fileinput
 import os
 
 # fabric.api
