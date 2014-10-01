@@ -21,7 +21,9 @@ __all__ = [
 
 
 class Project(object):
+
     """Class for create project."""
+
     def __init__(self, name, path, project={}, url=None, src=None, trash=[]):
         super(Project, self).__init__()
         self.name = name
@@ -65,7 +67,7 @@ class Project(object):
             silently (bool): signal for ask user about confirm operation.
         """
         self.trash = trash or self.trash
-        msg = yellow(u'Be careful! This operation will not cancel! Continue?')
+        msg = yellow(u'Be careful! Clean operation can\'t cancel! Continue?')
         if not silently and not confirm(msg):
             print(red(u'Canceled by user!'))
             return
@@ -89,3 +91,18 @@ class Project(object):
             if result.failed:
                 abort(red(result))
         print(green(u'"{0.src}" cloned in "{1}".').format(self, _path))
+
+    def remove(self):
+        """Remove exist project."""
+        msg = yellow(u'Be careful! Remove operation can\'t cancel! Continue?')
+        if not confirm(msg):
+            print(red(u'Canceled by user!'))
+            return
+        _path = self.path
+        if self.name not in self.path:
+            _path = os.path.join(self.path, self.name)
+        with settings(warn_only=True):
+            result = run('rm -rf {0}'.format(_path))
+            if result.failed:
+                abort(red(result))
+        print(green(u'Project "{.name}" removed.').format(self))
