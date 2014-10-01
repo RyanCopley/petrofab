@@ -71,10 +71,10 @@ class Teamocil(object):
                     abort(red(result))
         print(green(u'Teamocil layout in "{0}" was init.').format(layout))
 
-    def make_layout(self, root=None, name=None, filename=None):
+    def enable_layout(self, name=None, root=None, filename=None):
         """Make Teamocil layout in root directory."""
-        self.root = self._get_root(root)
         self.name = self._get_name(name)
+        self.root = self._get_root(root)
         self.filename = self._get_filename(filename)
         link = os.path.join(self.root, '%s.yml' % self.name)
         layout = self._get_layout(self.path, self.filename)
@@ -82,4 +82,14 @@ class Teamocil(object):
             result = run('ln -s {0} {1}'.format(layout, link))
             if result.failed:
                 abort(red(result))
-        print(green(u'Teamocil layout "{0}" was create.').format(self.name))
+        print(green(u'Teamocil layout "{.name}" enabled.').format(self))
+
+    def disable_layout(self, name=None, root=None):
+        self.name = self._get_name(name)
+        self.root = self._get_root(root)
+        link = os.path.join(self.root, '%s.yml' % self.name)
+        with settings(warn_only=True):
+            result = run('rm -f {0}'.format(link))
+            if result.failed:
+                abort(red(result))
+        print(green(u'Teamocil layout "{.name}" disabled.').format(self))

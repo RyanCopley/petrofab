@@ -27,7 +27,7 @@ class Sublime(object):
         """ Set name of Sublime project."""
         with cd(self.path), settings(warn_only=True):
             result = run(('mv example.sublime-project'
-                          ' {0}.sublime-project').format(self.name))
+                          ' {.name}.sublime-project').format(self))
             if result.failed:
                 abort(red(result))
-        print(green(u'Sublime project was init.'))
+        print(green(u'Sublime project "{.name}" inited.').format(self))

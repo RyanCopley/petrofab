@@ -33,13 +33,12 @@ class Project(object):
 
     def make_path(self):
         """Create root path of project."""
-        _path = os.path.join(self.path, self.name)
-        self.path = _path
+        self.path = os.path.join(self.path, self.name)
         with settings(warn_only=True):
-            result = run('mkdir -p %s' % _path)
+            result = run('mkdir -p {.path}'.format(self))
             if result.failed:
                 abort(red(result))
-        print(green(u'"{path}" was create.').format(**self.__dict__))
+        print(green(u'"{.path}" created.').format(self))
 
     def get_template(self, url=None):
         """Clone template of project dirs.
@@ -53,11 +52,10 @@ class Project(object):
         _url = url or self.url
         self.url = _url or prompt(u'URL to repo with template:')
         with settings(warn_only=True):
-            result = run('git clone {0} {1}'.format(self.url, self.path))
+            result = run('git clone {0.url} {0.path}'.format(self))
             if result.failed:
-                msg = result
-                abort(red(msg.format(**self.__dict__)))
-        print(green(u'"{url}" was clone.').format(**self.__dict__))
+                abort(red(result))
+        print(green(u'"{.url}" cloned.').format(self))
 
     def clean(self, trash=[], silently=False):
         """Remove trash from cloned tmpl.
@@ -74,7 +72,7 @@ class Project(object):
         with cd(self.path):
             for pattern in self.trash:
                 run('find . -iname "%s" -print0 | xargs -0 rm -rf' % pattern)
-        print(green(u'"{path}" was clean.').format(**self.__dict__))
+        print(green(u'"{.path}" is clean.').format(self))
 
     def get_source_code(self, src=None):
         """Clone source code of project.
@@ -87,7 +85,7 @@ class Project(object):
         _src = src or self.src
         self.src = _src or prompt(u'Enter URL of repo with source code:')
         with settings(warn_only=True):
-            result = run('git clone {0} {1}'.format(self.src, _path))
+            result = run('git clone {0.src} {1}'.format(self, _path))
             if result.failed:
                 abort(red(result))
-        print(green(u'"{src}" was clone.').format(**self.__dict__))
+        print(green(u'"{0.src}" cloned in "{1}".').format(self, _path))
