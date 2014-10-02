@@ -15,15 +15,9 @@ class UtilsTest(unittest.TestCase):
 
     def setUp(self):
         self.config_dict = {
-            "hosts": ["localhost"],
-            "project": {
-                "path": ".",
-                "url": "https://github.com/petrikoz/project-template.git"
-            },
-            "teamocil": {
-                "root": "~/.teamocil",
-                "filename": ".teamocil.yml"
-            }
+            'hosts': '...',
+            'project': '...',
+            'teamocil': '...'
         }
         self.config_file = '/tmp/.petrofab.json'
         self.standard_path = os.path.dirname(
