@@ -13,6 +13,6 @@ install:
     - "pip install fabric"
     - "pip install coveralls"
 script:
-    - "make test"
+    - "nosetests --with-coverage --cover-package petrofab --cover-erase --with-doctest --nocapture"
 after_success:
   coveralls
