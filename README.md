@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/petrikoz/petrofab.svg?branch=develop)](https://travis-ci.org/petrikoz/petrofab)
+[![Coverage Status](https://img.shields.io/coveralls/petrikoz/petrofab.svg)](https://coveralls.io/r/petrikoz/petrofab?branch=develop)
 
 # petrofab #
 
@@ -7,7 +8,6 @@ Utilities for work projects. Based on [Fabric](https://github.com/fabric/fabric)
 ## Install ##
 
 ```shell
-
 pip install git+https://github.com/petrikoz/petrofab.git
 ```
 
@@ -16,7 +16,6 @@ pip install git+https://github.com/petrikoz/petrofab.git
 Place your `fabfile.py` in any directory:
 
 ```python
-
 # -*- coding: utf-8 -*-
 # native
 import os
@@ -101,7 +100,6 @@ def del_proj(name=None, path=None):
 Optionaly your can place `.petrofab.json` in there.
 
 ```json
-
 {
   "hosts": ["localhost"],
   "project": {
@@ -118,6 +116,5 @@ Optionaly your can place `.petrofab.json` in there.
 Run any task:
 
 ```shell
-
 fab mk_proj:foo,/tmp
 ```
