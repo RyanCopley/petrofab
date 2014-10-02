@@ -21,19 +21,8 @@ def path_abs(path, check=True):
         path (str): some path.
         check (bool): check path exists, default is True.
 
-    Returns:
+    Return:
         String is containing absolute path of arg 'path'.
-
-    Examples:
-        Result must be absolute
-        >>> path_abs('/./tmp')
-        '/tmp'
-
-        Result must exists
-        >>> path_abs('/TmP')
-        Traceback (most recent call last):
-            ...
-        SystemExit: 1
     """
     path = os.path.expanduser(path)
     path = os.path.abspath(path)
@@ -48,8 +37,12 @@ def get_config(fabenv, path=None):
     Read JSON config file and convert data to Python dict.
 
     Args:
+        fabenv : Object 'env' from Fabric.
         path (str): Some path to config file,
                     defaults 'petrofab/defaults.json'.
+
+    Return:
+        Updated object 'env' from Fabric.
     """
     _path = path or prompt(u'Path to config:')
     _path = path_abs(_path)
@@ -57,7 +50,7 @@ def get_config(fabenv, path=None):
         abort(red(u'"{0}" must be directory!').format(_path))
     _path = os.path.join(_path, '.petrofab.json')
     if not os.path.isfile(_path):
-        abort(red(u'"{0}" not exists!').format(_path))
+        abort(red(u'File "{0}" not exists!').format(_path))
     config = json.load(open(_path))
     for key, value in config.iteritems():
         setattr(fabenv, key, value)
