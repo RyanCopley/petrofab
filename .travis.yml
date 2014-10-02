@@ -11,6 +11,8 @@ python:
     - "2.7"
 install:
     - "pip install fabric"
-    - "pip install coverage"
+    - "pip install coveralls"
 script:
     - "make test"
+after_success:
+  coveralls
