@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/petrikoz/petrofab.svg?branch=develop)](https://travis-ci.org/petrikoz/petrofab)
-[![Coverage Status](https://img.shields.io/coveralls/petrikoz/petrofab.svg)](https://coveralls.io/r/petrikoz/petrofab?branch=develop)
+[![Coverage Status](https://img.shields.io/coveralls/petrikoz/petrofab/develop.svg)](https://coveralls.io/r/petrikoz/petrofab?branch=develop)
 
 # petrofab #
 
