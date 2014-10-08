@@ -1,33 +1,50 @@
 # -*- coding: utf-8 -*-
 # fabric.api
-from fabric.api import settings
-from fabric.colors import green, red
+from fabric.api import env
+from fabric.colors import green
 from fabric.context_managers import cd
-from fabric.operations import run
-from fabric.utils import abort
+from fabric.decorators import task
+from fabric.operations import prompt, run
+from fabric.tasks import Task
 
 # in-module
 from .utils import path_abs
 
 __all__ = [
-    'Sublime',
+    'rename',
+    'subl_project',
 ]
 
+env.hosts = ['localhost']
 
-class Sublime(object):
 
-    """docstring for Sublime"""
+@task
+def rename(new_name, path, old_name='example'):
+    """ Set new name to Sublime project.
 
-    def __init__(self, name, path):
-        super(Sublime, self).__init__()
-        self.name = name
-        self.path = path_abs(path)
+    Args:
+        new_name (str): New name of Sublime project config file.
+        path (str): Path to folder which contains Sublime project config file.
+        old_name (str): Old name of Sublime project config file.
+                        Default 'exapmle'.
+    """
+    _path = path_abs(path)
+    with cd(_path):
+        run(('mv {0}.sublime-project'
+             ' {1}.sublime-project').format(old_name, new_name))
+    print(green(u'Sublime project "{0}" named.').format(new_name))
 
-    def make_project(self):
-        """ Set name of Sublime project."""
-        with cd(self.path), settings(warn_only=True):
-            result = run(('mv example.sublime-project'
-                          ' {.name}.sublime-project').format(self))
-            if result.failed:
-                abort(red(result))
-        print(green(u'Sublime project "{.name}" inited.').format(self))
+
+class SublimeTask(Task):
+
+    """Full task for create new Sublime project."""
+
+    name = 'subl_project'
+
+    def run(self, name=None, path=None, config={}):
+        self.env = config or getattr(env, 'sublime', {})
+        self.proj_name = name or prompt(u'Sublime project name:')
+        self.proj_path = path or prompt(u'Path to Sublime project config:')
+        rename(self.proj_name, self.proj_path)
+
+subl_project = SublimeTask()

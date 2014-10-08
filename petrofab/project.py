@@ -3,11 +3,12 @@
 import os
 
 # fabric.api
-from fabric.api import settings
-from fabric.colors import green, red, yellow
+from fabric.api import env
+from fabric.colors import cyan, green, red, yellow
 from fabric.context_managers import cd
+from fabric.decorators import task
 from fabric.operations import prompt, run
-from fabric.utils import abort
+from fabric.tasks import Task
 
 # fabric.contrib
 from fabric.contrib.console import confirm
@@ -16,93 +17,132 @@ from fabric.contrib.console import confirm
 from .utils import path_abs
 
 __all__ = [
-    'Project',
+    'clean',
+    'get_source_code',
+    'get_template',
+    'make_path',
+    'mk_project',
+    'ProjectTask',
+    'remove_project',
 ]
 
+env.hosts = ['localhost']
 
-class Project(object):
 
-    """Class for create project."""
+@task
+def make_path(name, root):
+    """Create directory for project.
 
-    def __init__(self, name, path, project={}, url=None, src=None, trash=[]):
-        super(Project, self).__init__()
-        self.name = name
-        self.path = path_abs(path)
-        self.env = project
-        self.url = url or self.env.get('url', None)
-        self.src = src or self.env.get('src', None)
-        self.trash = trash or self.env.get('trash', ['.git*', 'readme.*'])
+    Args:
+        name (str): Name of project.
+        root (str): Path to folder which will contain new project.
 
-    def make_path(self):
-        """Create root path of project."""
-        self.path = os.path.join(self.path, self.name)
-        with settings(warn_only=True):
-            result = run('mkdir -p {.path}'.format(self))
-            if result.failed:
-                abort(red(result))
-        print(green(u'"{.path}" created.').format(self))
+    Return:
+        Path to folder with new project: path + name.
+    """
+    _path = os.path.join(path_abs(root), name)
+    run('mkdir -p {0}'.format(_path))
+    print(green(u'"{0}" created.').format(_path))
+    return _path
 
-    def get_template(self, url=None):
-        """Clone template of project dirs.
 
-        Clone template of project from GitHub:
-        https://github.com/petrikoz/project-template
+@task
+def get_template(tmpl, path):
+    """Clone template of project dirs.
 
-        Args:
-            url (str): URL to repo with project template.
-        """
-        _url = url or self.url
-        self.url = _url or prompt(u'URL to repo with template:')
-        with settings(warn_only=True):
-            result = run('git clone {0.url} {0.path}'.format(self))
-            if result.failed:
-                abort(red(result))
-        print(green(u'"{.url}" cloned.').format(self))
+    Clone template of project from GitHub:
+    https://github.com/petrikoz/project-template
 
-    def clean(self, trash=[], silently=False):
-        """Remove trash from cloned tmpl.
+    Args:
+        tmpl (str): URL to repo with project template.
+        path (str): Path to project directory.
+    """
+    _tmpl = tmpl
+    _path = path_abs(path)
+    run('git clone {0} {1}'.format(_tmpl, _path))
+    print(green(u'"{0}" cloned.').format(_tmpl))
 
-        Args:
-            trash (list): list of patterns which will remove.
-            silently (bool): signal for ask user about confirm operation.
-        """
-        self.trash = trash or self.trash
-        msg = yellow(u'Be careful! Clean operation can\'t cancel! Continue?')
-        if not silently and not confirm(msg):
-            print(red(u'Canceled by user!'))
-            return
-        with cd(self.path):
-            for pattern in self.trash:
-                run('find . -iname "%s" -print0 | xargs -0 rm -rf' % pattern)
-        print(green(u'"{.path}" is clean.').format(self))
 
-    def get_source_code(self, src=None):
-        """Clone source code of project.
+@task
+def clean(path, trash=['.git*', 'readme.*'], quiet=False):
+    """Remove trash from cloned tmpl.
 
-        Args:
-            src (str): URL of repo with source code, defaults is None.
-            path (str): Path to new project, defaults to '~/work'.
-        """
-        _path = os.path.join(self.path, 'src')
-        _src = src or self.src
-        self.src = _src or prompt(u'Enter URL of repo with source code:')
-        with settings(warn_only=True):
-            result = run('git clone {0.src} {1}'.format(self, _path))
-            if result.failed:
-                abort(red(result))
-        print(green(u'"{0.src}" cloned in "{1}".').format(self, _path))
+    Args:
+        trash (list): List of patterns which will remove.
+        quiet (bool): If True then warnings won't show. Default: False.
+    """
+    _path = path_abs(path)
+    _trash = trash
+    msg = yellow(u'Be careful! Clean operation can\'t cancel! Continue?')
+    if not quiet and not confirm(msg):
+        print(red(u'Canceled by user!'))
+        return
+    with cd(_path):
+        for pattern in _trash:
+            run('find . -iname "%s" -print0 | xargs -0 rm -rf' % pattern)
+    print(green(u'"{0}" is clean.').format(_path))
 
-    def remove(self):
-        """Remove exist project."""
-        msg = yellow(u'Be careful! Remove operation can\'t cancel! Continue?')
-        if not confirm(msg):
-            print(red(u'Canceled by user!'))
-            return
-        _path = self.path
-        if self.name not in self.path:
-            _path = os.path.join(self.path, self.name)
-        with settings(warn_only=True):
-            result = run('rm -rf {0}'.format(_path))
-            if result.failed:
-                abort(red(result))
-        print(green(u'Project "{.name}" removed.').format(self))
+
+@task
+def get_source_code(src, path):
+    """Clone source code of project.
+
+    Args:
+        src (str): URL of repo with source code, defaults is None.
+        path (str): Path to project folder.
+    """
+    _src = src
+    _path = path_abs(os.path.join(path, 'src'))
+    run('git clone {0} {1}'.format(_src, _path))
+    print(green(u'"{0}" cloned in "{1}".').format(_src, _path))
+
+
+@task
+def remove_project(path):
+    """Remove exist project by path."""
+    msg = yellow(u'Be careful! Remove operation can\'t cancel! Continue?')
+    if not confirm(msg):
+        print(red(u'Canceled by user!'))
+        return
+    _path = path_abs(path, check=False)
+    run('rm -rf {0}'.format(_path))
+    print(green(u'Project "{0}" removed.').format(_path))
+
+
+class ProjectTask(Task):
+
+    """Full task for create new project."""
+
+    name = 'mk_project'
+
+    def run(self, name=None, root=None, config={}, tmpl=None, trash=None,
+            src=None):
+        self.env = config or getattr(env, 'project', {})
+
+        self.proj_name = name or prompt(u'Project name:')
+        _root = root or self.env.get('root', None)
+        self.proj_root = _root or prompt(u'Project root path:')
+
+        _tmpl = tmpl or self.env.get('tmpl', None)
+        self.proj_tmpl = _tmpl or prompt(u'URL to repo with template:')
+
+        self.trash = trash or self.env.get('trash', None)
+
+        self.proj_path = make_path(self.proj_name, self.proj_root)
+        get_template(self.proj_tmpl, self.proj_path)
+        if self.trash is None:
+            clean(self.proj_path, quiet=True)
+        else:
+            clean(self.proj_path, trash=self.trash, quiet=True)
+        msg = (u'\nProject was create:'
+               u'\n\tName:\t{project.proj_name}'
+               u'\n\tPath:\t{project.proj_path}'
+               u'\n\tTemplate:\t{project.proj_tmpl}')
+        if confirm(u'Clone source code to project?', default=False):
+            _src = src or self.env.get('src', None)
+            self.proj_src = _src or prompt(u'Enter URL repo with source code:')
+            get_source_code(self.proj_src, self.proj_path)
+            msg += u'\n\tSource code:\t{project.proj_src}'
+        print(cyan(msg.format(project=self)))
+
+mk_project = ProjectTask()
