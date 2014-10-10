@@ -6,13 +6,14 @@
 # Distributed under terms of the BSD license.
 language: python
 notifications:
-    email: "po.zelenin@gmail.com"
+  email: "po.zelenin@gmail.com"
 python:
-    - "2.7"
+  - "2.7"
+  - "3.3"
 install:
-    - "pip install fabric"
-    - "pip install coveralls"
+  - "pip install fabric"
+  - "pip install coveralls"
 script:
-    - "nosetests --with-coverage --cover-package petrofab --cover-erase --with-doctest --nocapture"
+  - "nosetests --with-coverage --cover-package petrofab --cover-erase --with-doctest --nocapture"
 after_success:
   coveralls
