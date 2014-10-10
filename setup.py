@@ -4,8 +4,12 @@ import os
 from setuptools import find_packages, setup
 
 
-# Utility function to read the README file.
 def read(fname):
+    """Utility function to read the some file.
+
+    Args:
+        fname (str): File name.
+    """
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
