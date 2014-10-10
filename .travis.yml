@@ -9,7 +9,6 @@ notifications:
   email: "po.zelenin@gmail.com"
 python:
   - "2.7"
-  - "3.3"
 install:
   - "pip install fabric"
   - "pip install coveralls"
