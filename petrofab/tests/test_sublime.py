@@ -2,7 +2,10 @@
 # native
 import sys
 import unittest
-from StringIO import StringIO
+try:
+    from io import StringIO
+except ImportError:
+    from StringIO import StringIO
 
 # in-project
 from .. import sublime
@@ -50,6 +53,6 @@ class SublimeTest(unittest.TestCase):
         path = '/foo'
         with self.assertRaises(SystemExit):
             self.rename(self.proj_name, path)
-        msg = u'Path "{0}" not exists!'.format(path)
+        msg = 'Path "{0}" not exists!'.format(path)
         sys_msg = sys.stderr.getvalue().strip()
         self.assertIn(msg, sys_msg)

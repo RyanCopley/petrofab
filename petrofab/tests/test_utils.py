@@ -4,7 +4,10 @@ import json
 import os
 import sys
 import unittest
-from StringIO import StringIO
+try:
+    from io import StringIO
+except ImportError:
+    from StringIO import StringIO
 
 # in-project
 import petrofab
@@ -35,7 +38,7 @@ class PathAbsTest(unittest.TestCase):
         with self.assertRaises(SystemExit):
             path_abs('./tmp')
         path = os.path.join(self.standard_path, 'tmp')
-        msg = u'Path "{0}" not exists!'.format(path)
+        msg = 'Path "{0}" not exists!'.format(path)
         sys_msg = sys.stderr.getvalue().strip()
         self.assertIn(msg, sys_msg)
 
@@ -79,7 +82,7 @@ class GetConfigTest(unittest.TestCase):
         """Config must be file."""
         with self.assertRaises(SystemExit):
             get_config(self.fabenv, self.config_dir)
-        msg = u'Config "{0}" not exists!'.format(self.config_dir)
+        msg = 'Config "{0}" not exists!'.format(self.config_dir)
         sys_msg = sys.stderr.getvalue().strip()
         self.assertIn(msg, sys_msg)
 

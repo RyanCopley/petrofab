@@ -56,11 +56,11 @@ def get_config(fabenv, path=None):
             if os.path.isfile(_path):
                 path = _path
                 break
-    _path = path or prompt(u'Path to config:')
+    _path = path or prompt('Path to config:')
     _path = path_abs(_path)
     if not os.path.isfile(_path):
-        abort(red(u'Config "{0}" not exists!').format(_path))
+        abort(red('Config "{0}" not exists!').format(_path))
     config = json.load(open(_path))
-    for key, value in config.iteritems():
+    for key, value in config.items():
         setattr(fabenv, key, value)
     return fabenv

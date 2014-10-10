@@ -32,7 +32,7 @@ def rename(new_name, path, old_name='example'):
     with cd(_path):
         run(('mv {0}.sublime-project'
              ' {1}.sublime-project').format(old_name, new_name))
-    print(green(u'Sublime project "{0}" named.').format(new_name))
+    print(green('Sublime project "{0}" named.').format(new_name))
 
 
 class SublimeTask(Task):
@@ -43,8 +43,8 @@ class SublimeTask(Task):
 
     def run(self, name=None, path=None, config={}):
         self.env = config or getattr(env, 'sublime', {})
-        self.proj_name = name or prompt(u'Sublime project name:')
-        self.proj_path = path or prompt(u'Path to Sublime project config:')
+        self.proj_name = name or prompt('Sublime project name:')
+        self.proj_path = path or prompt('Path to Sublime project config:')
         rename(self.proj_name, self.proj_path)
 
 subl_project = SublimeTask()

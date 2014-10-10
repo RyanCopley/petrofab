@@ -42,7 +42,7 @@ def _get_layout(path, filename=TEAMOCIL_LAYOUT_CONFIG):
     """
     layout = os.path.join(path, filename)
     if not os.path.isfile(layout):
-        abort(red(u'"%s" not exists!' % layout))
+        abort(red('"%s" not exists!' % layout))
     return layout
 
 
@@ -59,15 +59,15 @@ def init_layout(name, path, filename=TEAMOCIL_LAYOUT_CONFIG):
     _path = path_abs(path)
     layout = _get_layout(_path, filename)
     repls = (
-        (u'<example>', _name),
-        (u'<Example>', _name.title()),
-        (u'<example/path>', _path),
+        ('<example>', _name),
+        ('<Example>', _name.title()),
+        ('<example/path>', _path),
     )
     with cd(_path):
         for repl in repls:
             run('sed -i.bak -e \'s|{0}|{1}|g\' {file}'.format(*repl,
                                                               file=layout))
-    print(green(u'Teamocil layout in "{0}" was init.').format(layout))
+    print(green('Teamocil layout in "{0}" was init.').format(layout))
     return layout
 
 
@@ -88,7 +88,7 @@ def enable_layout(name, path, root=TEAMOCIL_ROOT,
     link = os.path.join(_root, '%s.yml' % _name)
     layout = _get_layout(_path, filename)
     run('ln -s {0} {1}'.format(layout, link))
-    print(green(u'Teamocil layout "{0}" enabled.').format(_name))
+    print(green('Teamocil layout "{0}" enabled.').format(_name))
 
 
 @task
@@ -103,7 +103,7 @@ def disable_layout(name, root=TEAMOCIL_ROOT):
     _root = path_abs(root)
     link = os.path.join(_root, '%s.yml' % _name)
     run('rm -f {0}'.format(link))
-    print(green(u'Teamocil layout "{0}" disabled.').format(_name))
+    print(green('Teamocil layout "{0}" disabled.').format(_name))
 
 
 class TeamocilTask(Task):
@@ -114,21 +114,21 @@ class TeamocilTask(Task):
 
     def run(self, name=None, path=None, config={}, root=None, filename=None):
         self.env = config or getattr(env, 'teamocil', {})
-        self.layout_name = name or prompt(u'Teamocil layout name:')
-        self.layout_path = path or prompt(u'Path to Teamocil layout config:')
+        self.layout_name = name or prompt('Teamocil layout name:')
+        self.layout_path = path or prompt('Path to Teamocil layout config:')
         _file = filename or self.env.get('filename', None)
-        self.layout_file = _file or prompt(u'Teamocil layout config:')
+        self.layout_file = _file or prompt('Teamocil layout config:')
 
         layout = init_layout(self.layout_name, self.layout_path,
                              self.layout_file)
-        if confirm(u'Enable layout?'):
+        if confirm('Enable layout?'):
             _root = root or self.env.get('root', None)
-            self.teamocil_root = _root or prompt(u'Teamocil root folder:')
+            self.teamocil_root = _root or prompt('Teamocil root folder:')
             enable_layout(self.layout_name, self.layout_path,
                           self.teamocil_root, self.layout_file)
-            msg = (u'\nTeamocil layout inited:'
-                   u'\n\tName:\t{0.layout_name}'
-                   u'\n\tConfig:\t{1}')
+            msg = ('\nTeamocil layout inited:'
+                   '\n\tName:\t{0.layout_name}'
+                   '\n\tConfig:\t{1}')
             print(cyan(msg.format(self, layout)))
 
 mk_layout = TeamocilTask()
