@@ -57,10 +57,9 @@ def get_template(tmpl, path):
         tmpl (str): URL to repo with project template.
         path (str): Path to project directory.
     """
-    _tmpl = tmpl
     _path = path_abs(path)
-    run('git clone {0} {1}'.format(_tmpl, _path))
-    print(green(u'"{0}" cloned.').format(_tmpl))
+    run('git clone {0} {1}'.format(tmpl, _path))
+    print(green(u'"{0}" cloned.').format(tmpl))
 
 
 @task
@@ -72,13 +71,12 @@ def clean(path, trash=['.git*', 'readme.*'], quiet=False):
         quiet (bool): If True then warnings won't show. Default: False.
     """
     _path = path_abs(path)
-    _trash = trash
     msg = yellow(u'Be careful! Clean operation can\'t cancel! Continue?')
     if not quiet and not confirm(msg):
         print(red(u'Canceled by user!'))
         return
     with cd(_path):
-        for pattern in _trash:
+        for pattern in trash:
             run('find . -iname "%s" -print0 | xargs -0 rm -rf' % pattern)
     print(green(u'"{0}" is clean.').format(_path))
 
@@ -91,10 +89,9 @@ def get_source_code(src, path):
         src (str): URL of repo with source code, defaults is None.
         path (str): Path to project folder.
     """
-    _src = src
     _path = path_abs(os.path.join(path, 'src'))
-    run('git clone {0} {1}'.format(_src, _path))
-    print(green(u'"{0}" cloned in "{1}".').format(_src, _path))
+    run('git clone {0} {1}'.format(src, _path))
+    print(green(u'"{0}" cloned in "{1}".').format(src, _path))
 
 
 @task
