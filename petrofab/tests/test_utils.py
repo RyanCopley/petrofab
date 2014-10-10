@@ -5,9 +5,9 @@ import os
 import sys
 import unittest
 try:
-    from io import StringIO
-except ImportError:
     from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 
 # in-project
 import petrofab
