@@ -13,6 +13,13 @@ __all__ = [
     'path_abs',
 ]
 
+# Order is important
+DEFAULT_CONFIGS = [
+    '.petrofab/config.json',
+    '.petrofab.json',
+    '~/.petrofab/config.json',
+]
+
 
 def path_abs(path, check=True):
     """Return absolute path for some destination.
@@ -38,19 +45,21 @@ def get_config(fabenv, path=None):
 
     Args:
         fabenv : Object 'env' from Fabric.
-        path (str): Some path to config file,
-                    defaults 'petrofab/defaults.json'.
+        path (str): Some path to config file, defaults None.
 
     Return:
         Updated object 'env' from Fabric.
     """
+    if path is None:
+        for config in DEFAULT_CONFIGS:
+            _path = path_abs(config, False)
+            if os.path.isfile(_path):
+                path = _path
+                break
     _path = path or prompt(u'Path to config:')
     _path = path_abs(_path)
-    if not os.path.isdir(_path):
-        abort(red(u'"{0}" must be directory!').format(_path))
-    _path = os.path.join(_path, '.petrofab.json')
     if not os.path.isfile(_path):
-        abort(red(u'File "{0}" not exists!').format(_path))
+        abort(red(u'Config "{0}" not exists!').format(_path))
     config = json.load(open(_path))
     for key, value in config.iteritems():
         setattr(fabenv, key, value)
